@@ -7,13 +7,14 @@ const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_
 const AWS = require('aws-sdk');
 var ec2 = new AWS.EC2();
 
+var params = { InstanceIds: [ process.env.INSTANCE_ID ] };
+
 client.on('ready', () => {
    console.log(`Logged in as ${client.user.tag}!`);
 })
 
 client.on("messageCreate", msg => {
    if (msg.content === "!factory-status") {
-      var params = { InstanceIds: [ process.env.INSTANCE_ID ] };
       ec2.describeInstanceStatus(params, function(err, data) {
 	 if (err) {
             console.log(err, err.stack);
@@ -31,7 +32,14 @@ client.on("messageCreate", msg => {
       msg.reply("Start it yourself");
    } else if (msg.content === "!unsatisfactory") {
       console.log("Killing ec2 server")
-      msg.reply("Not my problem");
+      ec2.stopInstances(params, function(err, data) {
+         if (err) {
+            console.log(err, err.stack);
+            msg.reply("An error occured when trying to stop the server");
+         } else {
+            msg.reply("The server is off. You're so thoughtful!");
+         }
+      });
    }
 })
 
