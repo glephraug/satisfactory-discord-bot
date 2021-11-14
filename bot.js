@@ -29,7 +29,15 @@ client.on("messageCreate", msg => {
       });
    } else if (msg.content === "!satisfactory") {
       console.log("Starting ec2 server")
-      msg.reply("Start it yourself");
+      ec2.startInstances(params, function(err, data) {
+         if (err) {
+            console.log(err, err.stack);
+            msg.reply("An error occured when starting the server! Please contact nobody@cares.com");
+         } else {
+            console.log("Success!");
+	    msg.reply("The server is starting up. Have a fun time!");
+         }
+      });
    } else if (msg.content === "!unsatisfactory") {
       console.log("Killing ec2 server")
       ec2.stopInstances(params, function(err, data) {
@@ -37,6 +45,7 @@ client.on("messageCreate", msg => {
             console.log(err, err.stack);
             msg.reply("An error occured when trying to stop the server");
          } else {
+            console.log("Success!");
             msg.reply("The server is off. You're so thoughtful!");
          }
       });
