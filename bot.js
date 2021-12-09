@@ -1,9 +1,9 @@
 
 greets = new Map([
-   ['porcupines', "I love you, merciful master."],
-   ['sidfarkus', "Give me a call some time."],
+   ['porcupines', "I need a drink."],
+   ['sidfarkus', "What a nice young man."],
    ['grimoire', "Nice beard!"],
-   ['fil', "Also, you're handsome."]
+   ['xeno28', "Also, you're handsome."]
 ]);
 
 require('dotenv').config();
