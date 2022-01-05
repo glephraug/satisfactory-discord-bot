@@ -22,15 +22,15 @@ client.on('ready', () => {
 
 client.on("messageCreate", msg => {
    var greet = "Do I know you?";
-   if(greets.has(msg.author.username)){
+   if (greets.has(msg.author.username)) {
       greet = greets.get(msg.author.username);
    }
    if (msg.content === "!factory-status") {
       ec2.describeInstanceStatus(params, function(err, data) {
-	 if (err) {
+         if (err) {
             console.log(err, err.stack);
             msg.reply("Error getting instance status. Sorry.");
-	 } else {
+         } else {
             if (data.InstanceStatuses.length < 1) {
                msg.reply("Satisfactory server is down. " + greet);
             } else {
@@ -39,18 +39,18 @@ client.on("messageCreate", msg => {
          }
       });
    } else if (msg.content === "!satisfactory") {
-      console.log("Starting ec2 server")
+      console.log("Starting ec2 server");
       ec2.startInstances(params, function(err, data) {
          if (err) {
             console.log(err, err.stack);
             msg.reply("An error occured when starting the server! Please contact nobody@cares.com");
          } else {
             console.log("Success!");
-	    msg.reply("The server is starting up. Have a fun time! " + greet);
+            msg.reply("The server is starting up. Have a fun time! " + greet);
          }
       });
    } else if (msg.content === "!unsatisfactory") {
-      console.log("Killing ec2 server")
+      console.log("Killing ec2 server");
       ec2.stopInstances(params, function(err, data) {
          if (err) {
             console.log(err, err.stack);
@@ -60,6 +60,8 @@ client.on("messageCreate", msg => {
             msg.reply("The server is off. You're so thoughtful! " + greet);
          }
       });
+   } else if (msg.content === "fat") {
+      msg.reply("no u");
    }
 })
 
