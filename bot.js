@@ -15,13 +15,13 @@ const AWS = require('aws-sdk');
 var ec2 = new AWS.EC2();
 
 //var SSH = require('simple-ssh')
-const { SH } = require('ssh2')
+const { SSH } = require('ssh2')
 var fs = require('fs')
 
 var params = { InstanceIds: [process.env.INSTANCE_ID] };
 
 function server_status(msg, text) {
-   /*const conn = new Client();
+   const conn = new SSH();
    conn.on('error', error => {
       msg.reply(text + "Cannot connect to server")
    });
@@ -39,7 +39,7 @@ function server_status(msg, text) {
       port: 22,
       username: 'ubuntu',
       privateKey: fs.readFileSync('/home/ubuntu/discord-control.pem')
-   });*/
+   });
 }
 
 function server_run(name) {
