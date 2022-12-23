@@ -19,7 +19,7 @@ var fs = require('fs')
 
 var params = { InstanceIds: [process.env.INSTANCE_ID] };
 
-function server_status(msg, text, greet) {
+function server_status(msg, text) {
    var ssh = new SSH({
       host: '3.19.154.252',
       user: 'ubuntu',
@@ -31,7 +31,7 @@ function server_status(msg, text, greet) {
          data += stdout;
       },
       exit: function (code) {
-         msg.reply(text + data + " " + greet)
+         msg.reply(text + data)
       }
    }).start();
 }
@@ -63,7 +63,7 @@ client.on("messageCreate", msg => {
             if (data.InstanceStatuses.length < 1) {
                msg.reply("Server is down. " + greet);
             } else {
-               server_status(msg, "Server is " + data.InstanceStatuses[0].InstanceState.Name + ". ", greet)
+               server_status(msg, "Server is " + data.InstanceStatuses[0].InstanceState.Name + ". ")
             }
          }
       });
