@@ -21,7 +21,7 @@ var fs = require('fs')
 var params = { InstanceIds: [process.env.INSTANCE_ID] };
 
 function server_status(msg, text) {
-   const conn = new Client();
+   /*const conn = new Client();
    conn.on('error', error => {
       msg.reply(text + "Cannot connect to server")
    });
@@ -39,7 +39,7 @@ function server_status(msg, text) {
       port: 22,
       username: 'ubuntu',
       privateKey: fs.readFileSync('/home/ubuntu/discord-control.pem')
-   });
+   });*/
 }
 
 function server_run(name) {
