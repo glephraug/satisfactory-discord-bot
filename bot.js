@@ -28,7 +28,8 @@ function server_status(msg, text) {
       var data = '';
       conn.exec('sh /home/ubuntu/aws-game-server/status.sh', (err, stream) => {
          stream.on('close', (code, signal) => {
-            msg.reply(text + data)
+            msg.reply(text + data);
+            conn.end();
          }).on('data', stdout => {
             data += stdout
          });
@@ -48,9 +49,10 @@ function server_run(msg, name, text) {
       msg.reply("Failed to start " + name + ", cannot connect to server. Oh bother.")
    });
    conn.on('ready', () => {
+      msg.reply(text);
       conn.exec("sh /home/ubuntu/aws-game-server/run.sh " + name, (err, stream) => {
          stream.on('close', (code, signal) => {
-            msg.reply(text)
+            conn.end();
          });
       });
    }).connect({
