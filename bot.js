@@ -14,6 +14,8 @@ const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_
 const AWS = require('aws-sdk');
 var ec2 = new AWS.EC2();
 
+var SSH = require('simple-ssh')
+
 var params = { InstanceIds: [ process.env.INSTANCE_ID ] };
 
 client.on('ready', () => {
@@ -25,7 +27,7 @@ client.on("messageCreate", msg => {
    if (greets.has(msg.author.username)) {
       greet = greets.get(msg.author.username);
    }
-   if (msg.content === "!factory-status") {
+   if (msg.content === "!server-status") {
       ec2.describeInstanceStatus(params, function(err, data) {
          if (err) {
             console.log(err, err.stack);
