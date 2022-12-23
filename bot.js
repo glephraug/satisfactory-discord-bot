@@ -114,7 +114,7 @@ client.on("messageCreate", msg => {
       msg.reply("no u");
    } else if (msg.content === "luv u") {
       msg.reply("Oh, I luv u 2 " + msg.author.username);
-   } else if (msg.isMemberMentioned(client.user)) {
+   } else if (msg.mentions.has(client.user)) {
       msg.reply("You have mentioned my name and accessed helpful help! Valid commands are !server-start !server-stop !server-status." +
          "After starting the server, select the game to host with one of !server-satisfactory !server-valheim. " +
          "Only one game at a time! When you start a game all others will be shut down.");
