@@ -8,20 +8,20 @@ greets = new Map([
 
 require('dotenv').config();
 
-const { Client, Intents } = require('discord.js');
-const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES] });
+const Discord = require('discord.js');
+const client = new Discord.Client({ intents: [Discord.Intents.FLAGS.GUILDS, Discord.Intents.FLAGS.GUILD_MESSAGES] });
 
 const AWS = require('aws-sdk');
 var ec2 = new AWS.EC2();
 
 //var SSH = require('simple-ssh')
-const { SSH } = require('ssh2')
+const SSH = require('ssh2')
 var fs = require('fs')
 
 var params = { InstanceIds: [process.env.INSTANCE_ID] };
 
 function server_status(msg, text) {
-   const conn = new SSH();
+   const conn = new SSH.Client();
    conn.on('error', error => {
       msg.reply(text + "Cannot connect to server")
    });
