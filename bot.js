@@ -109,8 +109,10 @@ client.on("messageCreate", msg => {
          }
       });
    } else if (msg.content === "!server-satisfactory") {
+      console.log("Trying to start satisfactory");
       server_run(msg, "satisfactory", "Oh ho, you wanna make them items? " + greet);
    } else if (msg.content === "!server-valheim") {
+      console.log("Trying to start valheim");
       server_run(msg, "valheim", "How soft your fields so green can whisper tales of gore. " + greet);
    } else if (msg.content === "fat") {
       msg.reply("no u");
