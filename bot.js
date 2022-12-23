@@ -14,7 +14,6 @@ const client = new Discord.Client({ intents: [Discord.Intents.FLAGS.GUILDS, Disc
 const AWS = require('aws-sdk');
 var ec2 = new AWS.EC2();
 
-//var SSH = require('simple-ssh')
 const SSH = require('ssh2')
 var fs = require('fs')
 
@@ -43,13 +42,24 @@ function server_status(msg, text) {
    });
 }
 
-function server_run(name) {
-   //var ssh = new SSH({
-   //   host: '3.19.154.252',
-   //   user: 'ubuntu',
-   //   key: fs.readFileSync('/home/ubuntu/discord-control.pem')
-   //});
-   //ssh.exec("sh /home/ubuntu/aws-game-server/run.sh " + name).start();
+function server_run(msg, name, text) {
+   const conn = new SSH.Client();
+   conn.on('error', error => {
+      msg.reply("Failed to start " + name + ", cannot connect to server. Oh bother.")
+   });
+   conn.on('ready', () => {
+      conn.exec("sh /home/ubuntu/aws-game-server/run.sh " + name, (err, stream) => {
+         stream.on('close', (code, signal) => {
+            msg.reply(text)
+         });
+      });
+   }).connect({
+      host: '3.19.154.252',
+      port: 22,
+      readyTimeout: 3000,
+      username: 'ubuntu',
+      privateKey: fs.readFileSync('/home/ubuntu/discord-control.pem')
+   });
 }
 
 client.on('ready', () => {
@@ -97,15 +107,17 @@ client.on("messageCreate", msg => {
          }
       });
    } else if (msg.content === "!server-satisfactory") {
-      msg.reply("Oh ho, you wanna make them items? " + greet);
-      server_run("satisfactory");
+      server_run(msg, "satisfactory", "Oh ho, you wanna make them items? " + greet);
    } else if (msg.content === "!server-valheim") {
-      msg.reply("How soft your fields so green can whisper tales of gore. " + greet);
-      server_run("valheim");
+      server_run(msg, "valheim", "How soft your fields so green can whisper tales of gore. " + greet);
    } else if (msg.content === "fat") {
       msg.reply("no u");
    } else if (msg.content === "luv u") {
       msg.reply("Oh, I luv u 2 " + msg.author.username);
+   } else if (msg.isMemberMentioned(client.user)) {
+      msg.reply("You have mentioned my name and accessed helpful help! Valid commands are !server-start !server-stop !server-status." +
+         "After starting the server, select the game to host with one of !server-satisfactory !server-valheim. " +
+         "Only one game at a time! When you start a game all others will be shut down.");
    }
 })
 
