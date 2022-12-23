@@ -15,8 +15,26 @@ const AWS = require('aws-sdk');
 var ec2 = new AWS.EC2();
 
 var SSH = require('simple-ssh')
+var fs = require('fs')
 
-var params = { InstanceIds: [ process.env.INSTANCE_ID ] };
+var params = { InstanceIds: [process.env.INSTANCE_ID] };
+
+function server_status(msg) {
+   var ssh = new SSH({
+      host: '3.19.154.252',
+      user: 'ubuntu',
+      key: fs.readFileSync('/home/ubuntu/discord-control.pem')
+   });
+   var data = '';
+   ssh.exec('sh /home/ubuntu/aws-game-server/status.sh', {
+      out: function (stdout) {
+         data += stdout;
+      },
+      exit: function (code) {
+         msg.reply(data)
+      }
+   }).start();
+}
 
 client.on('ready', () => {
    console.log(`Logged in as ${client.user.tag}!`);
@@ -37,6 +55,7 @@ client.on("messageCreate", msg => {
                msg.reply("Satisfactory server is down. " + greet);
             } else {
                msg.reply("Satisfactory server is " + data.InstanceStatuses[0].InstanceState.Name + ". " + greet);
+               server_status(msg)
             }
          }
       });
@@ -64,6 +83,8 @@ client.on("messageCreate", msg => {
       });
    } else if (msg.content === "fat") {
       msg.reply("no u");
+   } else if (msg.content === "luv u") {
+      msg.reply("Oh, I luv u 2 " + msg.author.username);
    }
 })
 
