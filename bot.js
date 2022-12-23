@@ -37,6 +37,7 @@ function server_status(msg, text) {
    }).connect({
       host: '3.19.154.252',
       port: 22,
+      readyTimeout: 3000,
       username: 'ubuntu',
       privateKey: fs.readFileSync('/home/ubuntu/discord-control.pem')
    });
