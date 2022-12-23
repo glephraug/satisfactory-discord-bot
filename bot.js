@@ -14,35 +14,41 @@ const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_
 const AWS = require('aws-sdk');
 var ec2 = new AWS.EC2();
 
-var SSH = require('simple-ssh')
+//var SSH = require('simple-ssh')
+const { SH } = require('ssh2')
 var fs = require('fs')
 
 var params = { InstanceIds: [process.env.INSTANCE_ID] };
 
 function server_status(msg, text) {
-   var ssh = new SSH({
-      host: '3.19.154.252',
-      user: 'ubuntu',
-      key: fs.readFileSync('/home/ubuntu/discord-control.pem')
+   const conn = new Client();
+   conn.on('error', error => {
+      msg.reply(text + "Cannot connect to server")
    });
-   var data = '';
-   ssh.exec('sh /home/ubuntu/aws-game-server/status.sh', {
-      out: function (stdout) {
-         data += stdout;
-      },
-      exit: function (code) {
-         msg.reply(text + data)
-      }
-   }).start();
+   conn.on('ready', () => {
+      var data = '';
+      conn.exec('sh /home/ubuntu/aws-game-server/status.sh', (err, stream) => {
+         stream.on('close', (code, signal) => {
+            msg.reply(text + data)
+         }).on('data', stdout => {
+            data += stdout
+         });
+      });
+   }).connect({
+      host: '3.19.154.252',
+      port: 22,
+      username: 'ubuntu',
+      privateKey: fs.readFileSync('/home/ubuntu/discord-control.pem')
+   });
 }
 
 function server_run(name) {
-   var ssh = new SSH({
-      host: '3.19.154.252',
-      user: 'ubuntu',
-      key: fs.readFileSync('/home/ubuntu/discord-control.pem')
-   });
-   ssh.exec("sh /home/ubuntu/aws-game-server/run.sh " + name).start();
+   //var ssh = new SSH({
+   //   host: '3.19.154.252',
+   //   user: 'ubuntu',
+   //   key: fs.readFileSync('/home/ubuntu/discord-control.pem')
+   //});
+   //ssh.exec("sh /home/ubuntu/aws-game-server/run.sh " + name).start();
 }
 
 client.on('ready', () => {
