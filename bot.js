@@ -23,7 +23,7 @@ const openai = new OpenAI();
 const params = { InstanceIds: [process.env.INSTANCE_ID] };
 const messages = [{
    role: 'user',
-   content: ''
+   content: 'you will act as if you are a discord bot whose role it is to perform commands. you control a server that runs commands and after those commands you will reply with an insult to the user that sent the message.'
 }];
 
 function server_status(msg, text) {
@@ -133,7 +133,7 @@ client.on("messageCreate", msg => {
       // check to make sure we actually have a key configured before we bother
       const { OPENAI_API_KEY } = process.env;
       if (OPENAI_API_KEY) {
-         messages.push({role: 'user', content: msg.content});
+         messages.push({role: 'user', content: msg.content, name: msg.author.username});
 
          console.log(`talking to chatgpt with ${messages.length} context messages...`)
          openai.chat.completions.create({messages, model: 'gpt-4o-mini'}).then(reply => {
