@@ -22,7 +22,7 @@ const util = require('node:util');
 const openai = new OpenAI();
 const params = { InstanceIds: [process.env.INSTANCE_ID] };
 const messages = [{
-   role: 'user',
+   role: 'system',
    content: 'you will act as if you are a discord bot whose role it is to perform commands. you control a server that runs commands and after those commands you will reply with an insult to the user that sent the message.'
 }];
 
