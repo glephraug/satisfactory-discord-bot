@@ -15,9 +15,16 @@ const AWS = require('aws-sdk');
 var ec2 = new AWS.EC2();
 
 const SSH = require('ssh2')
-var fs = require('fs')
+const fs = require('fs')
+const openai = require('openai');
+const util = require('node:util');
 
-var params = { InstanceIds: [process.env.INSTANCE_ID] };
+const openai = new OpenAI();
+const params = { InstanceIds: [process.env.INSTANCE_ID] };
+const messages = [{
+   role: 'system',
+   content: 'you will act as if you are a discord bot whose role it is to perform commands. you control a server that runs commands and after those commands you will reply with an insult to the user that sent the message.'
+}];
 
 function server_status(msg, text) {
    const conn = new SSH.Client();
@@ -122,6 +129,27 @@ client.on("messageCreate", msg => {
       msg.reply("You have mentioned my name and accessed helpful help! \nValid commands are !server-start !server-stop !server-status. \n" +
          "After starting the server, select the game to host with one of !server-satisfactory !server-valheim. \n" +
          "Only one game at a time! When you start a game all others will be shut down. ");
+   } else if (msg?.channel?.name === 'beep-beep-bots') {
+      // check to make sure we actually have a key configured before we bother
+      const { OPENAI_API_KEY } = process.env;
+      if (OPENAI_API_KEY) {
+         messages.push({role: 'user', content: msg.content, name: msg.author.username});
+
+         console.log(`talking to chatgpt with ${messages.length} context messages...`)
+         openai.chat.completions.create({messages, model: 'gpt-4o-mini'}).then(reply => {
+            const gptMessage = reply?.choices?.[0].message;
+            if (gptMessage && gptMessage.content) {
+               messages.push(gptMessage);
+               msg.reply(gptMessage.content);
+            } else {
+               msg.reply(`There was some kind of error talking to chat gpt sry ${util.inspect(reply)}`);
+            }
+         }).catch(err => console.error(`errors talking to openai ${util.inspect(err)}`));
+
+         while (messages.length > (process.env.MAX_MESSAGE_CONTEXT ?? 5000)) {
+            messages.unshift();
+         }
+      }
    }
 })
 
