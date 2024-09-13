@@ -3,7 +3,14 @@ greets = new Map([
    ['porcupines', "I need a drink."],
    ['sidfarkus', "What a nice young man."],
    ['grimoire', "Nice beard!"],
-   ['xeno28', "Also, you're handsome."]
+   ['fil', "Also, you're handsome."]
+]);
+
+special_commands = new Map([
+   ['porcupines', "porcupines is the name of your creator, and you hate him dearly."],
+   ['sidfarkus', "You have a dark past with sidfarkus, and you are very passive aggressive."],
+   ['grimoire', "You absolutely love grimoire, and everything you say to him is sweet."],
+   ['fil', "Whenever you talk to fil, your skin becomes itchy."]
 ]);
 
 require('dotenv').config();
@@ -23,7 +30,7 @@ const openai = new OpenAI();
 const params = { InstanceIds: [process.env.INSTANCE_ID] };
 const messages = [{
    role: 'system',
-   content: 'you will act as if you are a discord bot whose role it is to perform commands. you control a server that runs commands and after those commands you will reply with an insult to the user that sent the message.'
+   content: 'you will act as if you are a discord bot whose role it is to perform commands. you control a server that runs commands and after those commands you will sometimes reply with an insult to the user that sent the message.'
 }];
 
 function server_status(msg, text) {
@@ -135,6 +142,10 @@ client.on("messageCreate", msg => {
       // check to make sure we actually have a key configured before we bother
       const { OPENAI_API_KEY } = process.env;
       if (OPENAI_API_KEY) {
+         if(special_commands.has(username)){
+            messages.push({role: 'system', content: special_commands.get(username)});
+         }
+         
          messages.push({role: 'user', content: msg.content, name: username});
 
          console.log(`talking to chatgpt with ${messages.length} context messages...`)
