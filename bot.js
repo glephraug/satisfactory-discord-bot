@@ -76,9 +76,11 @@ client.on('ready', () => {
 })
 
 client.on("messageCreate", msg => {
+   if (msg.author.id === client.user.id) return;
    var greet = "Do I know you?";
-   if (greets.has(msg.author.username)) {
-      greet = greets.get(msg.author.username);
+   var username = msg.author.username.replace(/\W/g, '')   
+   if (greets.has(username)) {
+      greet = greets.get(username);
    }
    if (msg.content === "!server-status") {
       ec2.describeInstanceStatus(params, function (err, data) {
@@ -133,7 +135,7 @@ client.on("messageCreate", msg => {
       // check to make sure we actually have a key configured before we bother
       const { OPENAI_API_KEY } = process.env;
       if (OPENAI_API_KEY) {
-         messages.push({role: 'user', content: msg.content, name: msg.author.username});
+         messages.push({role: 'user', content: msg.content, name: username});
 
          console.log(`talking to chatgpt with ${messages.length} context messages...`)
          openai.chat.completions.create({messages, model: 'gpt-4o-mini'}).then(reply => {
