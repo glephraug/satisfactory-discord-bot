@@ -16,7 +16,7 @@ var ec2 = new AWS.EC2();
 
 const SSH = require('ssh2')
 const fs = require('fs')
-const openai = require('openai');
+const OpenAI = require('openai');
 const util = require('node:util');
 
 const openai = new OpenAI();
